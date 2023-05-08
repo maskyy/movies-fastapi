@@ -5,15 +5,15 @@ router = APIRouter(
 )
 
 @router.get("/films/{id}/comments")
-def get_film_comments():
+async def get_film_comments():
     pass
 
 
 @router.post("/films/{id}/comments")
-def add_film_comment():
+async def add_film_comment():
     pass
 
 
 @router.delete("/comments/{id}")
-def remove_comment():
+async def remove_comment():
     pass

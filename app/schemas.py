@@ -1,4 +1,14 @@
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, constr, validator
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: str | None = None
+    scopes: list[str] = []
 
 
 class UserBase(BaseModel):
@@ -6,7 +16,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str
+    password: constr(min_length=8)
     password_confirmation: str
     name: str
     avatar_url: str | None = None

@@ -6,15 +6,15 @@ router = APIRouter(
 
 
 @router.get("/favorite")
-def get_favorites():
+async def get_favorites():
     pass
 
 
 @router.post("/films/{id}/favorite")
-def add_favorite():
+async def add_favorite():
     pass
 
 
 @router.delete("/films/{id}/favorite")
-def remove_favorite():
+async def remove_favorite():
     pass

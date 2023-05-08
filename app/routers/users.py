@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from .. import crud, schemas
 from ..dependencies import get_db
+from ..internal.token import get_current_user
 
 router = APIRouter(
     tags=["users"],
@@ -67,16 +68,6 @@ async def create_user(
     return crud.create_user(db, user)
 
 
-@router.post("/login")
-def login_user(user: schemas.UserLogin):
-    pass
-
-
-@router.get("/user")
-def get_user():
-    pass
-
-
-@router.post("/logout")
-def logout_user():
-    pass
+@router.get("/user", response_model=schemas.User)
+async def get_user(user: Annotated[schemas.User, Depends(get_current_user)]):
+    return user

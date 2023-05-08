@@ -1,4 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Security
+
+from .. import schemas
+from ..internal.token import get_current_user
 
 router = APIRouter(
     tags=["films"],
@@ -6,15 +11,15 @@ router = APIRouter(
 
 
 @router.get("/films")
-def get_films():
+async def get_films():
     pass
 
 
 @router.get("/films/{id}")
-def get_film():
+async def get_film():
     pass
 
 
 @router.post("/films")
-def add_film():
+async def add_film(user: Annotated[schemas.User, Security(get_current_user, scopes=["add_films"])]):
     pass
