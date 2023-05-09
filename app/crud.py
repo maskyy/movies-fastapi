@@ -19,7 +19,7 @@ def create_user(db: Session, user: schemas.UserCreate):
         email=user.email,
         password=hashed_pwd,
         name=user.name,
-        avatar_url=user.avatar_url
+        avatar_url=user.avatar_url,
     )
     db.add(db_user)
     db.commit()
@@ -48,7 +48,11 @@ def create_film(db: Session, film: schemas.FilmCreate):
 
 
 def get_favorites(db: Session, user_id: int):
-    return db.query(models.Favorite.film_id).filter(models.Favorite.user_id == user_id).all()
+    return (
+        db.query(models.Favorite.film_id)
+        .filter(models.Favorite.user_id == user_id)
+        .all()
+    )
 
 
 def get_favorite_films(db: Session, user_id: int):
@@ -75,12 +79,26 @@ def delete_favorite(db: Session, film_id: int, user_id: int):
 
 
 def get_film_comments(db: Session, film_id: int):
-    return db.query(models.Film.comments).filter(models.Film.id == film_id).first()
+    film = get_film(db, film_id)
+    return film.comments
 
 
-def add_comment(db: Session, data: schemas.CommentCreate):
-    db_comment = models.Comment(**data.dict())
+def get_comment(db: Session, comment_id: int):
+    return db.query(models.Comment).filter(models.Comment.id == comment_id).first()
+
+
+def add_comment(db: Session, data: schemas.CommentBase, film_id: int, user_id: int):
+    db_comment = models.Comment(
+        film_id=film_id,
+        user_id=user_id,
+        **data.dict(),
+    )
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)
     return db_comment
+
+
+def delete_comment(db: Session, comment_id: int):
+    db.query(models.Comment).filter(models.Comment.id == comment_id).delete()
+    db.commit()

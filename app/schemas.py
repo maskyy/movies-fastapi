@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, constr, validator
 
 
@@ -59,7 +60,7 @@ class FilmCreate(FilmBase):
     starring: list[str] = []
     run_time: int | None = None
     released: int | None = None
-    imdb_id: constr(regex=r'tt\d+$')
+    imdb_id: constr(regex=r"tt\d+$")
     status: str
 
     @validator("status")
@@ -93,5 +94,6 @@ class CommentCreate(CommentBase):
 
 
 class Comment(CommentBase):
+    id: int
     author: str
     created_at: datetime

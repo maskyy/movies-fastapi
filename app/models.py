@@ -1,5 +1,12 @@
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
-                        Text)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text
+)
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -18,6 +25,7 @@ class User(Base):
     is_staff = Column(Boolean, default=False)
 
     favorites = relationship("Favorite", back_populates="user")
+    comments = relationship("Comment", back_populates="user")
 
 
 class Film(Base):
@@ -64,3 +72,4 @@ class Comment(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     film = relationship("Film", uselist=False, back_populates="comments")
+    user = relationship("User", uselist=False, back_populates="comments")
