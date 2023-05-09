@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, EmailStr, constr, validator
 
 
@@ -44,39 +45,53 @@ class User(UserBase):
 class FilmBase(BaseModel):
     name: str
     preview_image: str | None
-    video_link: str | None
-    genre: list[str]
+    preview_video_link: str | None
+    genre: list[str] = []
 
 
 class FilmCreate(FilmBase):
-    poster_image: str | None
-    background_image: str | None
-    background_color: str | None
-    preview_video_link: str | None
-    description: str
-    director: str
-    starring: list[str]
-    run_time: int
-    released: int
-    imdb_id: str
+    poster_image: str | None = None
+    background_image: str | None = None
+    background_color: str | None = None
+    video_link: str | None = None
+    description: str | None = None
+    director: str | None = None
+    starring: list[str] = []
+    run_time: int | None = None
+    released: int | None = None
+    imdb_id: constr(regex=r'tt\d+$')
     status: str
 
+    @validator("status")
+    def validate_status(cls, v):
+        if v not in ["pending", "on moderation", "ready"]:
+            raise ValueError('status should be "pending", "on moderation" or "ready"')
+        return v
 
 class Film(FilmBase):
-    pass
+    id: int
+
+    class Config:
+        orm_mode = True
 
 
-class Favorite(BaseModel):
-    pass
+class FilmDetail(FilmCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
 
 
 class CommentBase(BaseModel):
-    pass
+    text: str
+    rating: int
 
 
 class CommentCreate(CommentBase):
-    pass
+    film_id: int
+    user_id: int
 
 
 class Comment(CommentBase):
-    pass
+    author: str
+    created_at: datetime

@@ -1,4 +1,5 @@
 from passlib.hash import bcrypt
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from . import models, schemas
@@ -28,3 +29,58 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def get_films(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Film).offset(skip).limit(limit).all()
+
+
+def get_film_ids(db: Session):
+    return db.query(models.Film.id).all()
+
+
+def get_film(db: Session, film_id: int):
+    return db.query(models.Film).filter(models.Film.id == film_id).first()
+
+
+def create_film(db: Session, film: schemas.FilmCreate):
+    db_film = models.Film(**film.dict())
+    db.add(db_film)
+    db.commit()
+    db.refresh(db_film)
+    return db_film
+
+
+def get_favorites(db: Session, user_id: int):
+    return db.query(models.Favorite.film_id).filter(models.Favorite.user_id == user_id).all()
+
+
+def get_favorite_films(db: Session, user_id: int):
+    favorites = [x for (x,) in get_favorites(db, user_id)]
+    return db.query(models.Film).filter(models.Film.id.in_(favorites)).all()
+
+
+def add_favorite(db: Session, film_id: int, user_id: int):
+    db_fav = models.Favorite(film_id=film_id, user_id=user_id)
+    db.add(db_fav)
+    db.commit()
+    db.refresh(db_fav)
+    return db_fav
+
+
+def delete_favorite(db: Session, film_id: int, user_id: int):
+    db.query(models.Favorite).filter(
+        and_(
+            models.Favorite.user_id == user_id,
+            models.Favorite.film_id == film_id,
+        )
+    ).delete()
+    db.commit()
+
+
+def get_film_comments(db: Session, film_id: int):
+    return db.query(models.Film.comments).filter(models.Film.id == film_id).first()
+
+
+def add_comment(db: Session, data: schemas.CommentCreate):
+    db_comment = models.Comment(**data.dict())
+    db.add(db_comment)
+    db.commit()
+    db.refresh(db_comment)
+    return db_comment
