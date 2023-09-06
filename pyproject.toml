@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "movies"
+version = "0.1.0"
+description = "Movies API (exam task)"
+authors = ["maskyy <62175286+maskyy@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiofiles = "^23.2.1"
+email-validator = "^2.0.0.post2"
+fastapi = "^0.103.1"
+jose = "^1.0.0"
+passlib = "^1.7.4"
+pydantic = "^2.3.0"
+python-multipart = "^0.0.6"
+python-jose = "^3.3.0"
+SQLAlchemy = "^2.0.20"
+uvicorn = "^0.23.2"
+
+[tool.poetry.group.dev.dependencies]
+gray = "^0.13.0"
+pytest = "^7.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
